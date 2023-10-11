@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import { useSelector } from "react-redux";
 import Homepage from './pages/homepage/homepage';
 import Login from './pages/login/login';
