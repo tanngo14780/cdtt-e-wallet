@@ -1,0 +1,39 @@
+.Login{
+    background-color:white;
+    padding-top: 100px;
+    padding-bottom: 100px;  
+}
+.form{
+    display: flex;
+    justify-content: center;
+}
+form{
+    height: 450px   ;
+    padding:40px 20px;
+    background-color:  rgba(0,0,0,0.1);
+    box-shadow: 0 0 14px rgba(0,0,0,.1);
+    min-height: 100%;
+    font-family: 'Arial','Segoe UI';
+    font-size:15px;
+    color: #444;
+}
+.frm-content{
+    display: flex;
+    justify-content: center;
+    padding: 5px 0;
+}
+.input-text{
+    display: block;
+    width: 100%;
+    height: 30px;
+}
+#submit-btn{
+    display: none;
+}
+.submit-btn{
+    margin-top:20px;
+    padding: 10px 20px;
+    color: white;
+    background-color: rgb(8, 69, 126);
+    border-radius: 10px;
+}
