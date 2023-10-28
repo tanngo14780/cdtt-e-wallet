@@ -11,7 +11,6 @@ export default function Home(){
         setSelectedOption(e.target.value);
     };
     return(
-        <body className="Homepage">
-        </body>
+       <div></div>
     )
 }

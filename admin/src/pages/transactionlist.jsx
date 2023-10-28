@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 const columns = [
     { field: 'id', headerName: 'ID', width: 50,  },
     { field: 'name', headerName: 'Họ và tên', width: 250,  },
-    { field: 'studentid', headerName: 'Mã sinh viên', width: 150 },
+    { field: 'userId', headerName: 'Mã sinh viên', width: 150 },
     {
       field: 'paymentcard',
       headerName: 'Thẻ thanh toán',
@@ -30,7 +30,7 @@ const columns = [
   ];
 
 const rows = [
-  { id: 1, name: 'Snow', studentid: '11203502', paymentcard:'dhfjkdsaflajkfdlfal', amount:'12000',type:'nạp tiền',date:'2002/12/1' },
+  { id: 1, name: 'Snow', userId: '11203502', paymentcard:'dhfjkdsaflajkfdlfal', amount:'12000',type:'nạp tiền',date:'2002/12/1' },
   { id: 2, name: 'Snow', studentid: '11203502', paymentcard:'dhfjkdsaflajkfdlfal', amount:'12000',type:'nạp tiền',date:'2002/12/1' },
   { id: 3, name: 'Snow', studentid: '11203502', paymentcard:'dhfjkdsaflajkfdlfal', amount:'12000',type:'nạp tiền',date:'2002/12/1' },
   { id: 4, name: 'Snow', studentid: '11203502', paymentcard:'dhfjkdsaflajkfdlfal', amount:'12000',type:'nạp tiền',date:'2002/12/1' },

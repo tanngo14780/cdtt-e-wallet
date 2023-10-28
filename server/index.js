@@ -1,63 +1,60 @@
-import express from 'express';
-import { MongoClient } from 'mongodb';
+import express, { response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import morgan from 'morgan';
-import bodyParser from "body-parser";
-import foodRoute from './routes/foods.js';
-import userRoute from './routes/users.js';
-import orderRoute from './routes/orders.js';
+import { initializeApp } from "firebase/app";
+import { collection, doc,addDoc, setDoc, getDoc,getDocs, deleteDoc, getFirestore } from "firebase/firestore";
+import userRoute from './routes/users.js'
 import authRoute from './routes/auth.js';
-import reviewRoute from './routes/reviews.js';
-import reservationRoute from './routes/reservations.js';
-import { foods, orders, reviews } from './data/index.js';
+import bodyParser from "body-parser";
 
-//CONFIG
+
+//config
 dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(bodyParser.json({ extended: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(morgan('common'));
 app.use(cors());
-// app.use(express.urlencoded());
 
-//ROUTES
-app.use('/auth', authRoute);
-app.use('/users', userRoute);
-app.use('/foods', foodRoute);
-app.use('/orders', orderRoute);
-app.use('/reviews', reviewRoute);
-app.use('/reservations', reservationRoute);
 
-//CONNECT DB
+//conect db
 const PORT = process.env.PORT || 6001;
-const dbName = 'test';
 let db;
- 
 export const connectDb = async () => {
-    const client = new MongoClient(process.env.MONGO_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    });
-    
-    try {
-        await client.connect();
-        app.listen(PORT, () => console.log(`server port: ${PORT}`));
-        db = client.db(dbName);
 
-        //ADD DATA ONE TIME
-        // db.collection('foods').insertMany(foods);
-        // db.collection('orders').insertMany(orders);
-        // db.collection('reviews').insertMany(reviews);
+    try {
+        const firebaseConfig = {
+            apiKey: "AIzaSyC5NnnKNXtgWqhUYTpe6j7o0lCfwBp4HQg",
+            authDomain: "cdtt-1ba2a.firebaseapp.com",
+            databaseURL: "https://cdtt-1ba2a-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "cdtt-1ba2a",
+            storageBucket: "cdtt-1ba2a.appspot.com",
+            messagingSenderId: "625667945221",
+            appId: "1:625667945221:web:3e16e12bb7e1691489fd6c"
+        };
+
+        initializeApp(firebaseConfig);
+        app.listen(PORT, () => console.log(`server port: ${PORT}`));
+        db = getFirestore();
+
 
     } catch (err) {
         console.log(err);
     }
 }
+connectDb();
 
 export const getDb = () => {
     return db;
 }
 
-connectDb();
+
+
+//route
+app.use('/users',userRoute);
+app.use('/auth', authRoute);
+
+
+
+
+

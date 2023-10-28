@@ -1,8 +1,10 @@
 import "./sidebar.css";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setLogout } from "../../state";
 export default function Sidebar() {
-    
+    const dispatch = useDispatch();
     return (
         <div style={{ height:'600px', width: '17%', backgroundColor:'rgb(10, 109, 200)'}}>
             <div className="sidebarMenu">
@@ -41,8 +43,14 @@ export default function Sidebar() {
                     
                 </ul>
                 <div>
-                    <div className="logout-btn" style={{textAlign:'center', paddingTop:'10px'}}>
-                        <input type="submit" value="Log out" style={{width:'120px',height:'30px',fontWeight:600}} />
+                    <div className="frm-content">
+                        <button 
+                            type="submit" 
+                            className='submit-btn'
+                            style={{width:'120px',height:'30px',fontWeight:600}} 
+                            onClick={() => dispatch(setLogout())}>
+                            Log out
+                        </button>
                     </div>
                 </div>
             </div>

@@ -11,28 +11,36 @@ import Sidebar from './components/sidebar/sidebar';
 import Header from './components/header';
 import NewUser from './pages/newUser/NewUser';
 
-export default function App() {  
-  // const isAuth = Boolean(useSelector((state) => state.token));
+export default function App() {
+  const isAuth = Boolean(useSelector((state) => state.token));
+
   return (
     <Router>
-      <div className="App">   
-      <Header/>
-      <div className='container' style={{display:'flex',flexDirection:'row'}}>
-        <Sidebar/>    
-        <div style={{width:'80%',padding:"20px", backgroundColor:"rgba(0,0,0,0.15)"}}>
-          <Routes>
-              <Route path="/login" element={ <Login /> } />
-              <Route path="/homepage" element={  <Homepage /> } />
-              {/* <Route path="/users" element={isAuth ? <UserList /> : <Navigate to='/login'/>} /> */}
-              <Route path="/users" element={  <Userlist /> } />
-              <Route path="/transactions" element={  <Transactionlist /> } />
-              <Route path="/chat" element={  <Chat/> } />
-              <Route path="/services" element={  <Service/> } />
-              <Route path="/addUser" element={  <NewUser/> } />
-            </Routes>  
-        </div>    
-      </div>
-        
+      <div className="App">
+        <Routes>
+          <Route
+            path="/login"
+            element={isAuth ? <Navigate to="/homepage" /> : <Login />}
+          />
+        </Routes>
+        {isAuth ? (
+          <>
+            <Header />
+            <div className='container' style={{display:'flex',flexDirection:'row'}}>
+              <Sidebar />
+              <div style={{width:'80%',padding:"20px", backgroundColor:"rgba(0,0,0,0.15)"}}>
+                <Routes>
+                  <Route path="/homepage" element={<Homepage />} />
+                  <Route path="/users" element={<Userlist />} />
+                  <Route path="/transactions" element={<Transactionlist />} />
+                  <Route path="/chat" element={<Chat />} />
+                  <Route path="/services" element={<Service />} />
+                  <Route path="/addUser" element={<NewUser />} />
+                </Routes>
+              </div>
+            </div>
+          </>
+        ) : <Navigate to ="/login"/>}
       </div>
     </Router>
   );
