@@ -9,9 +9,9 @@ router.post('/create', addNewuser);
 router.get('/', getAllUsers);
 router.get('/:id', getUsers)
 //UPDATE
-router.put('/:id,',updateUser);
+router.put('/update/:id',updateUser);
 //DETELE
-router.delete('/:id',deleteUser);
+router.delete('/delete/:id',deleteUser);
 
 
 export default router;

@@ -1,68 +1,94 @@
 import * as React from 'react';
+import axios from 'axios';
+import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { DataGrid, } from '@mui/x-data-grid';
-import { Link } from 'react-router-dom';
 
 const columns = [
-    { field: 'id', headerName: 'ID', width: 50,  },
-    { field: 'name', headerName: 'Họ và tên', width: 250,  },
-    { field: 'userId', headerName: 'Mã sinh viên', width: 150 },
-    {
-      field: 'paymentcard',
-      headerName: 'Thẻ thanh toán',
-      width: 200,
-    },    
-    {
-        field: 'type',
-        headerName: 'Loại giao dịch',
-        width: 120,
-    },
-    {
-      field: "date",
-      headerName: "Date",
-      width: 200,
-    },
-    {
-      field: 'amount',
-      headerName: 'giao dịch',
-      type: 'number',
-      width: 150,
+  { field: 'createID', headerName: 'Người gửi', width: 250, },
+  { field: 'receiveID', headerName: 'Người nhận', width: 150 },
+  {
+    field: 'type',
+    headerName: 'Loại giao dịch',
+    width: 120,
   },
-  ];
-
-const rows = [
-  { id: 1, name: 'Snow', userId: '11203502', paymentcard:'dhfjkdsaflajkfdlfal', amount:'12000',type:'nạp tiền',date:'2002/12/1' },
-  { id: 2, name: 'Snow', studentid: '11203502', paymentcard:'dhfjkdsaflajkfdlfal', amount:'12000',type:'nạp tiền',date:'2002/12/1' },
-  { id: 3, name: 'Snow', studentid: '11203502', paymentcard:'dhfjkdsaflajkfdlfal', amount:'12000',type:'nạp tiền',date:'2002/12/1' },
-  { id: 4, name: 'Snow', studentid: '11203502', paymentcard:'dhfjkdsaflajkfdlfal', amount:'12000',type:'nạp tiền',date:'2002/12/1' },
-  { id: 5, name: 'Snow', studentid: '11203502', paymentcard:'dhfjkdsaflajkfdlfal', amount:'12000',type:'nạp tiền',date:'2002/12/1' },
-  { id: 6, name: 'Snow', studentid: '11203502', paymentcard:'dhfjkdsaflajkfdlfal', amount:'12000',type:'nạp tiền',date:'2002/12/1' },
-  { id: 7, name: 'Snow', studentid: '11203502', paymentcard:'dhfjkdsaflajkfdlfal', amount:'12000',type:'nạp tiền',date:'2002/12/1' },
-  { id: 8, name: 'Snow', studentid: '11203502', paymentcard:'dhfjkdsaflajkfdlfal', amount:'12000',type:'nạp tiền',date:'2002/12/1' },
-
+  {
+    field: "createTime",
+    headerName: "Ngày thực hiện",
+    width: 200,
+    type:'date',
+    valueGetter: (params) => {
+      const timestamp = params.row.createTime.seconds; // Giả sử dữ liệu timestamp ở đây
+      const date = new Date(timestamp * 1000); // Chuyển đổi timestamp thành đối tượng Date
+      return date;
+    },
+    renderCell: (params) => {
+      const formattedDate = params.value.toLocaleString(); // Định dạng ngày tháng
+      return formattedDate;
+    },
+  },
+  { 
+    field: 'amount',
+    headerName: 'Số tiền',
+    type: 'number',
+    headerAlign: "left",
+    align: "left",
+    width: 150,
+  },
 ];
 
+  
 
 export default function Transactionlist() {
+
+  const [data, setData] = useState([])
+  const userdata = useSelector((state) => state.userdata);
+
+  useEffect(() => {
+    const getAllTransactions = async () => {
+      try {
+        const response = await axios.get('http://localhost:3002/transactions/');
+        const resData = response.data;
+        setData(resData);
+      } catch (error) {
+        if (error.response.status === 500) {
+          console.log("khong xac dinh");
+        }
+      }
+    };
+    getAllTransactions();
+  }, []);
+
   return (
-    <div style={{ borderRadius:'10px', height: 'auto', width: '98%', backgroundColor:'white',padding:'15px' }}>
-        <div>
-            <h1>Lịch sử giao dịch</h1>
-        </div>
-        <div style={{textAlign:'center'}}>
-            <DataGrid
-            rows={rows}
-            columns={columns}
-            initialState={{
+    <div style={{ borderRadius: '10px', height: 'auto', width: '98%', backgroundColor: 'white', padding: '15px' }}>
+      <div>
+        <h1>Lịch sử giao dịch</h1>
+      </div>
+      <div style={{ textAlign: 'center' }}>
+        <DataGrid
+          rows={data}
+          columns={columns}
+          getRowId={(row) => row.objectId}
+          initialState={{
             pagination: {
-                paginationModel: { page: 0, pageSize: 5 },
+              paginationModel: { page: 0, pageSize: 5 },
             },
-            }}
-            pageSizeOptions={[5, 10]}
-            />
-        </div>
-        <div>
-          
-        </div>
+            sorting: {
+              ...data.initialState?.sorting,
+              sortModel: [
+                {
+                  field: 'createTime',
+                  sort: 'desc',
+                },
+              ],
+            },
+          }}
+          pageSizeOptions={[5, 10]}
+        />
+      </div>
+      <div>
+
+      </div>
     </div>
   );
 }

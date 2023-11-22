@@ -1,12 +1,11 @@
 import "./sidebar.css";
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setLogout } from "../../state";
 export default function Sidebar() {
     const dispatch = useDispatch();
     return (
-        <div style={{ height:'600px', width: '17%', backgroundColor:'rgb(10, 109, 200)'}}>
+        <div style={{ height:'700px', width: '17%', backgroundColor:'rgb(10, 109, 200)'}}>
             <div className="sidebarMenu">
                 <h3 className="sidebarTitle">Admin Manage</h3>
                 <ul className="sidebarList">
@@ -25,6 +24,11 @@ export default function Sidebar() {
                             Services 
                         </li>
                     </Link>
+                    <Link to="/activities" className="link">
+                        <li className="sidebarListItem">
+                            User Histories
+                        </li>
+                    </Link>
                     <Link to="/transactions" className="link">
                         <li className="sidebarListItem">
                             Transactions 
@@ -33,6 +37,11 @@ export default function Sidebar() {
                     <Link to="/chat" className="link">
                         <li className="sidebarListItem">
                             Chat
+                        </li>
+                    </Link>
+                    <Link to="/deposit" className="link">
+                        <li className="sidebarListItem">
+                            Deposit
                         </li>
                     </Link>
                     <Link to="/addUser" className="link">

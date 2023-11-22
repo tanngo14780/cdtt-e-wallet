@@ -1,18 +1,29 @@
 import './App.css';
-import { BrowserRouter as Router, Routes, Route} from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { useSelector } from "react-redux";
 import Homepage from './pages/homepage/homepage';
 import Login from './pages/login/login';
+import Return from './pages/returnVnpay';
 
-function App() {  
-  // const isAuth = Boolean(useSelector((state) => state.token));
+function App() {
+  const isAuth = Boolean(useSelector((state) => state.token));
   return (
     <Router>
-      <div className="App">       
-          <Routes>
-            <Route exact path="/" element={ <Login /> } />
-            <Route path="/homepage" element={  <Homepage /> } />
-          </Routes>      
+      <div className="App">
+        <Routes>
+          <Route
+            path="/login"
+            element={isAuth ? <Navigate to="/homepage" /> : <Login />}
+          />
+        </Routes>
+        {isAuth ? (
+          <>
+            <Routes>
+                  <Route path="/homepage" element={<Homepage /> } />
+                  <Route path="/deposit/vnpay_return" element={<Return/>}/>
+            </Routes>
+          </>
+        ) : <Navigate to ="/login"/>}
       </div>
     </Router>
   );

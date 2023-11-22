@@ -6,6 +6,7 @@ import {
     setDoc, 
     getDocs, 
     deleteDoc, 
+    onSnapshot
 } from "firebase/firestore";
 import { getDb } from '../index.js';
 
@@ -24,7 +25,6 @@ export const getAllUsers = async (req, res) => {
                 userData.objectId = doc.id;
                 usersData.push(userData);
             });
-            console.log(usersData)
             return res.status(200).json( usersData );
         } catch (error) {
             console.log(error);
@@ -35,29 +35,32 @@ export const getAllUsers = async (req, res) => {
 
 //get one
 export const getUsers = async (req, res) => {
-    if (req.body.role ==="admin" || req.doc.id === req.params.id) {
-        try {
-            // getgetDb()(); // Lấy đối tượng Firestore
-            const userDocRef = doc(getDb(), "Users", req.params.id); // Đối tượng DocumentReference
-    
-            const userDetail = await getDoc(userDocRef);
-    
-            if (!userDetail.exists()) {
-                // Người dùng không tồn tại
-                return res.status(404).send({ status: "failed", msg: "User not found" });
-            }
-    
-            const userData = userDetail.data();
-            return res.status(200).json(userData);
-        } catch (error) {
-            console.log(error);
-            return res.status(500).send({ status: "failed", msg: error.message });
-        }
-    } else {
-        res.status(403).json({ msg: 'Access denied' });
-    }   
-    
+    try {
+        // Lấy đối tượng Firestore
+        const userDocRef = doc(getDb(), 'Users', req.params.id); // Đối tượng DocumentReference
 
+        let responded = false; // Biến để kiểm tra xem đã gửi phản hồi hay chưa
+
+        const unsubscribe = onSnapshot(userDocRef, (docSnapshot) => {
+            if (!responded) { // Kiểm tra xem đã gửi phản hồi hay chưa
+                if (docSnapshot.exists()) {
+                    const userData = docSnapshot.data();
+                    res.status(200).json(userData);
+                } else {
+                    // Người dùng không tồn tại
+                    res.status(404).send({ status: 'failed', msg: 'User not found' });
+                }
+                responded = true; // Đã gửi phản hồi
+            }
+        });
+        // Ngừng lắng nghe khi không cần thiết
+        // Dựa vào logic của bạn để quyết định khi nào ngừng lắng nghe, ví dụ, khi kết thúc kết nối của người dùng
+        // unsubscribe(); 
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({ status: 'failed', msg: error.message });
+    }
 }
 
 //add one
@@ -67,6 +70,9 @@ export const addNewuser = async (req, res) => {
         console.log(newdata)
         const usersCollection = collection(getDb(), "Users");
         const newDocRef = await addDoc(usersCollection, newdata);
+
+       
+        await setDoc(doc(getDb(), "userChats", newDocRef.id),{});
 
         return res.status(200).send({ status: "success", msg: "Data saved", docId: newDocRef.id });
     } catch (error) {

@@ -1,25 +1,96 @@
-export default function ListTransaction(){
-    return(
-        <div style={{fontSize:'1.4em',border:"1px black solid",background:'white',padding:'10px'}}>
-            <div style={{display:'flex',justifyContent:'center',padding:'10px 0',fontSize:'1.3em',fontWeight:'700'}}>Lịch sử giao dịch</div>
-            <div className="box-list" style={{border:"1px black solid",background:'white',padding:'10px'}}>
-                <ul>
-                    <li>
-                        <div style={{width:'50%',height:'auto',background:'rgba(0,0,0,0.15)',borderRadius:'5px',padding:"10px"}}>
-                            giao dich 1
-                        </div>
-                    </li>
-                    <li>
-                        <div style={{width:'50%',height:'auto',background:'rgba(0,0,0,0.15)',borderRadius:'5px',padding:"10px"}}>
-                            giao dich 1
-                        </div>
-                    </li><li>
-                        <div style={{width:'50%',height:'auto',background:'rgba(0,0,0,0.15)',borderRadius:'5px',padding:"10px"}}>
-                            giao dich 1
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    )
+import * as React from 'react';
+import axios from 'axios';
+import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { DataGrid, } from '@mui/x-data-grid';
+import { DateTime } from 'luxon';
+
+const columns = [
+  { field: 'createID', headerName: 'Người gửi', width: 250, },
+  { field: 'receiveID', headerName: 'Người nhận', width: 150 },
+  {
+    field: 'type',
+    headerName: 'Loại giao dịch',
+    width: 120,
+  },
+  {
+    field: "createTime",
+    headerName: "Ngày thực hiện",
+    width: 200,
+    type:'date',
+    valueGetter: (params) => {
+      const timestamp = params.row.createTime.seconds; // Giả sử dữ liệu timestamp ở đây
+      const date = new Date(timestamp * 1000); // Chuyển đổi timestamp thành đối tượng Date
+      return date;
+    },
+    renderCell: (params) => {
+      const formattedDate = params.value.toLocaleString(); // Định dạng ngày tháng
+      return formattedDate;
+    },
+  },
+  {
+    field: 'amount',
+    headerName: 'Số tiền',
+    type: 'number',
+    headerAlign: "left",
+    align: "left",
+    width: 150,
+  },
+];
+
+
+
+export default function ListTransaction() {
+
+  const [data, setData] = useState([])
+  const userdata = useSelector((state) => state.userdata);
+
+  useEffect(() => {
+    const getAllTransactions = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3002/transactions/${userdata.userId}`);
+        const resData = response.data;
+        setData(resData);
+      } catch (error) {
+        if (error.response.status === 500) {
+          console.log("khong xac dinh");
+        }
+      }
+    };
+    getAllTransactions();
+    
+  }, []);
+
+  return (
+    <div style={{ borderRadius: '10px', height: 'auto', width: '98%', backgroundColor: 'white', padding: '15px' }}>
+      <div>
+        <h1>Lịch sử giao dịch</h1>
+      </div>
+      <div style={{ textAlign: 'center' }}>
+        <DataGrid
+          rows={data}
+          columns={columns}
+          getRowId={(row) => row.objectId}
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 5 },
+            },
+            sorting: {
+              ...data.initialState?.sorting,
+              sortModel: [
+                {
+                  field: 'createTime',
+                  sort: 'desc',
+                },
+              ],
+            },
+          }}
+          pageSizeOptions={[5, 10]}
+        />
+      </div>
+      <div>
+
+      </div>
+    </div>
+  );
 }

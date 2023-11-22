@@ -79,7 +79,7 @@ export default function Login(){
                     </div>
                     <div className="frm-content">
                         <input 
-                            type="text" 
+                            type="password" 
                             className='input-text'
                             label="password"
                             name="password"
@@ -93,7 +93,7 @@ export default function Login(){
                     <div className="frm-content">
                         <button type="submit" className='submit-btn' onClick={handleLogin}>Login</button>
                     </div>                 
-            </form>
+                </form>
             </div>            
         </div>
     )
