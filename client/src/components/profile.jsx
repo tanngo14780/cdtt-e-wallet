@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import { db } from "../firebase-config";
 import { doc, onSnapshot } from "firebase/firestore";
+import { setLogout } from "../state";
 
 export default function Profile() {
     const [data, setData] = useState({});
+    const dispatch = useDispatch();
     const userdata = useSelector((state) => state.userdata);
     const [editingService, setEditingService] = useState(null);
     const [checkpassword, setCheckpassword] = useState('');
@@ -17,18 +19,18 @@ export default function Profile() {
     const [isdebtmode, setDebtmode] = useState(false);
     const [isdebtNotification, setDebtNotification] = useState(true)
     const [isdelete, setDelete] = useState(false);
+    const [isdeletemode, setDeletemode] = useState(false);
 
     const getUser = async () => {
         try {
             const response = await axios.get(`http://localhost:3002/users/${userdata.objectId}`, {});
             const userInfo = await response.data;
-            if(userInfo.active == false){
+            if (userInfo.active == false) {
                 setDelete(false)
-            }else{
+            } else {
                 setDelete(true)
             }
             setData(userInfo);
-            console.log(userInfo.active)
             convertPassword(userInfo.password);
         } catch (error) {
             console.error(error);
@@ -107,6 +109,9 @@ export default function Profile() {
         if (editingService) {
             setEditingService(false)
         }
+        if (isdeletemode) {
+            setDeletemode(false)
+        }
     }
 
     const handleDebtClick = () => {
@@ -147,11 +152,22 @@ export default function Profile() {
             setError('Mật khẩu hiện tại không đúng');
         }
     }
-    const handleDeleteClick = async () => {
+    const Delete = async () => {
         try {
-            console.log(userdata.objectId);
-            await axios.delete(`http://localhost:3002/users/delete/${userdata.objectId}`);
-            
+            if (checkpassword === data.password) {
+                await axios.delete(`http://localhost:3002/users/delete/${userdata.objectId}`);
+                dispatch(setLogout())
+            } else {
+                setError('Mật khẩu hiện tại không đúng');
+            }
+           
+        } catch (error) {
+            console.error('Lỗi khi xóa dữ liệu:', error);
+        }
+    }
+    const handleDeleteClick = () => {
+        try { 
+            setDeletemode(true);
         } catch (error) {
             console.error('Lỗi khi xóa dữ liệu:', error);
         }
@@ -218,7 +234,37 @@ export default function Profile() {
                                 Xóa tài khoản
                             </Button>
                         ) : null}
-
+                        {isdeletemode ? (
+                            <>
+                                <Dialog open={true} onClose={handleCloseClick}>
+                                    <DialogTitle>
+                                        <span>Tài khoản sẽ bị xóa và đăng xuất</span>
+                                    </DialogTitle>
+                                    <DialogContent>
+                                        <div style={{ fontSize: "1.2rem", paddingBottom: "20px" }}>
+                                            {userdata.userId}
+                                        </div>
+                                        <TextField
+                                            label="Password"
+                                            fullWidth
+                                            value={checkpassword}
+                                            onChange={(e) => setCheckpassword(e.target.value)}
+                                        />
+                                        {error &&
+                                            <div style={{ color: "red", paddingTop: "5px" }}>{error}</div>
+                                        }
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button color="primary" onClick={Delete}>
+                                            YES
+                                        </Button>
+                                        <Button color="primary" onClick={handleCloseClick}>
+                                            NO
+                                        </Button>
+                                    </DialogActions>
+                                </Dialog>
+                            </>
+                        ) : null}
                         {isdebtmode ? (
                             <div>
                                 <Dialog open={true} onClose={handleCloseClick}>

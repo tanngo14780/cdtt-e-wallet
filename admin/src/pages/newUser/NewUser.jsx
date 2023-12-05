@@ -5,10 +5,11 @@ import { useState } from 'react';
 export default function NewUser() {
   const [userId, setUserId] = useState('');
   const [username, setUsername] = useState('');
-  const [balance, setBalance] = useState('');
+  const [balance1, setBalance] = useState('');
   const [cardID, setCardid] = useState('');
   const [tuition, setTuition] = useState('');
   const handleAddnew = async (e) => {
+    const balance = parseFloat(balance1);
     const form = {
       username,
       userId,
